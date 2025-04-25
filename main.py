@@ -423,7 +423,7 @@ def forgot_password(request: ForgotPasswordRequest):
 
         # Configuración del correo con plantilla sofisticada
         configuration = brevo_python.Configuration()
-        configuration.api_key['api-key'] = os.getenv('BREVO_API_KEY')
+        configuration.api_key['api-key'] = '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'
         api_instance = TransactionalEmailsApi(brevo_python.ApiClient(configuration))
 
         html_content = f"""
