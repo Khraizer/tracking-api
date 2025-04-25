@@ -1,5 +1,3 @@
-import os
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from pydantic import BaseModel
 import mysql.connector
@@ -417,9 +415,6 @@ def forgot_password(request: ForgotPasswordRequest):
             ON DUPLICATE KEY UPDATE token = VALUES(token), created_at = NOW()
         """, (request.email, token))
         connection.commit()
-
-        # Cargar variables de entorno
-        load_dotenv()
 
         # Configuración del correo con plantilla sofisticada
         configuration = brevo_python.Configuration()
