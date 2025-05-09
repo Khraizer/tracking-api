@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mysql.connector import Error
 from typing import Optional, List  # Importando List correctamente
 from datetime import datetime
+import requests
 
 # Configuración de la base de datos
 db_config = {
