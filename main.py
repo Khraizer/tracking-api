@@ -26,6 +26,10 @@ class MetadataCreate(BaseModel):
     hora: str
     fecha: str
 
+# Definición del modelo de regulación
+class ArduinoRequest(BaseModel):
+    valor: float 
+
 # Definición de Metadata (asegúrate de que esta clase está antes de la ruta)
 class Metadata(BaseModel):
     user_id: int
@@ -53,6 +57,7 @@ app.add_middleware(
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
+# Endpoint para insertar metadatos a la Base de Datos
 @app.post("/metadata")
 def insert_metadata(data: MetadataCreate):
     try:
@@ -85,7 +90,8 @@ def insert_metadata(data: MetadataCreate):
             cursor.close()
         if 'connection' in locals():
             connection.close()
-
+            
+# Endpoint para que el modelo de IA obtenga el historico de metadatos de un vehículo.
 @app.get("/metadata/{user_id}", response_model=List[Metadata])  # Usando Metadata correctamente
 def get_metadata(user_id: int):
     try:
@@ -115,6 +121,22 @@ def get_metadata(user_id: int):
             cursor.close()
         if 'connection' in locals():
             connection.close()
+
+# Endpoint para recibir la variable y enviarla a otro lugar
+@app.post("/send-to-arduino")
+async def send_to_arduino(data: ArduinoRequest):
+    try:
+        response = requests.post("http://pendiente-arduino", json={"valor": data.valor})
+        
+        if response.status_code == 200:
+            return {"message": "Datos enviados correctamente al dispositivo Arduino", "status": "success"}
+        else:
+            raise HTTPException(status_code=500, detail="Error al enviar los datos a Arduino")
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error al realizar la solicitud: {str(e)}")
+
+
 
 @app.get("/")
 def read_root():
